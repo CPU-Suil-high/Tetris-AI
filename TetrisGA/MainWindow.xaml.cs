@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,6 +93,26 @@ namespace TetrisGA {
             }
         }
 
+        private int[] previousBestGene;
+        public int[] PreviousBestGene {
+            get {
+                return previousBestGene;
+            }
+            set {
+                previousBestGene = value;
+            }
+        }
+
+        private Label previousBestGeneLabel;
+        public Label PreviousBestGeneLabel {
+            get {
+                return previousBestGeneLabel;
+            }
+            set {
+                previousBestGeneLabel = value;
+            }
+        }
+
         private Label[] geneLabels;
         public Label[] GeneLabels {
             get {
@@ -123,6 +144,8 @@ namespace TetrisGA {
         }
 
         private void NextGeneration() {
+            PreviousBestGene = TAManager.GetBestGenes(1)[0];
+
             TAManager.NextGeneration();
             PlaceCount = 0;
             GenerationLabel.Content = $"Generation : {TAManager.Generation}";
@@ -134,7 +157,7 @@ namespace TetrisGA {
             if (PlaceTimer.Interval != NextInterval) {
                 PlaceTimer.Interval = NextInterval;
             }
-            if (TAManager.CheckAllIsGameOver() || ++PlaceCount > 200) {
+            if (TAManager.CheckAllIsGameOver() || ++PlaceCount > 500) {
                 NextGeneration();
                 return;
             }
@@ -144,9 +167,26 @@ namespace TetrisGA {
         }
 
         private void UpdateGenerationInfo() {
+            if (PreviousBestGene == null) {
+                PreviousBestGeneLabel.Content = "[Previous Best Gene] : ()";
+            } else {
+                object[] args = new object[9];
+
+                for (int i = 0; i < 9; i++) {
+                    args[i] = (object)PreviousBestGene[i];
+                }
+                PreviousBestGeneLabel.Content = string.Format("[Previous Best Gene] : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4})", args);
+            }
+
             for (int i = 0; i < 25; i++) {
                 int[] gene = TAManager.Genes[i];
-                GeneLabels[i].Content = $"[{i, 2}] : ({gene[0], 4},{gene[1], 4},{gene[2], 4},{gene[3], 4},{gene[4], 4},{gene[5], 4},{gene[6], 4},{gene[7], 4},{gene[8], 4})";
+
+                object[] args = new object[9];
+
+                for (int j = 0; j < 9; j++) {
+                    args[j] = (object)gene[j];
+                }
+                GeneLabels[i].Content = $"[{i,2}]" + string.Format(" : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4})", args);
             }
         }
 
@@ -161,7 +201,15 @@ namespace TetrisGA {
                 backgroundDrawing.Geometry = background;
                 backgroundDrawing.Brush = Brushes.Black;
 
+                FormattedText num = new FormattedText($"{i}", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Consolas"), 10, Brushes.Gray, 120);
+
+                Geometry numGeomtry = num.BuildGeometry(new Point(0, 0));
+                GeometryDrawing numDrawing = new GeometryDrawing();
+                numDrawing.Geometry = numGeomtry;
+                numDrawing.Brush = Brushes.Gray;
+
                 dg.Children.Add(backgroundDrawing);
+                dg.Children.Add(numDrawing);
 
                 for (int y = 0; y < 20; y++) {
                     for (int x = 0; x < 10; x++) {
@@ -213,23 +261,15 @@ namespace TetrisGA {
                 TetrisImages[i].Width = 50;
                 TetrisImages[i].Height = 100;
 
-                RectangleGeometry rect = new RectangleGeometry(new Rect(0, 0, 50, 100));
-
-                GeometryDrawing drawing = new GeometryDrawing();
-                drawing.Geometry = rect;
-                drawing.Brush = Brushes.Black;
-
-                DrawingImage drawingImage = new DrawingImage(drawing);
-
                 TetrisImages[i].Stretch = Stretch.None;
-                TetrisImages[i].Source = drawingImage;
 
                 Canvas.SetLeft(TetrisImages[i], (i % 5) * 55);
                 Canvas.SetTop(TetrisImages[i], (i / 5) * 105);
 
                 canvas.Children.Add(TetrisImages[i]);
-
             }
+
+            UpdateTetrisImages();
         }
 
         private void Start(object sender, RoutedEventArgs e) {
@@ -271,6 +311,13 @@ namespace TetrisGA {
         private void GenerationInfoGrid_Initialized(object sender, EventArgs e) {
             Grid grid = (Grid)sender;
 
+            PreviousBestGeneLabel = new Label();
+            PreviousBestGeneLabel.Foreground = Brushes.White;
+            PreviousBestGeneLabel.FontFamily = new FontFamily("Consolas");
+            PreviousBestGeneLabel.Margin = new Thickness(10, 5, 0, 0);
+
+            grid.Children.Add(PreviousBestGeneLabel);
+
 
             for (int i = 0; i < 25; i++) {
                 Label geneLabel = new Label();
@@ -278,7 +325,7 @@ namespace TetrisGA {
                 geneLabel.Foreground = Brushes.White;
                 geneLabel.FontFamily = new FontFamily("Consolas");
 
-                geneLabel.Margin = new Thickness(10, i * 15 + 5, 0, 0);
+                geneLabel.Margin = new Thickness(10, i * 15 + 40, 0, 0);
 
                 GeneLabels[i] = geneLabel;
                 grid.Children.Add(geneLabel);

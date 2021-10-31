@@ -11,10 +11,10 @@
     <!-- 실제 길이 보다 height 37 크게 width는 14크게 써야한다 이유는 나도 모름 -->
     <Grid HorizontalAlignment="Left" Height="520" VerticalAlignment="Top" Width="780" Margin="10,10,0,0">
         <Canvas HorizontalAlignment="Left" Height="520" VerticalAlignment="Top" Width="270" Initialized="Canvas_Initialized"/>
-        <Button Content="Start" HorizontalAlignment="Left" Margin="705,501,0,0" VerticalAlignment="Top" Width="75" Click="Start"/>
-        <Slider HorizontalAlignment="Left" Margin="280,501,0,0" VerticalAlignment="Top" Width="420" Height="19" Maximum="499" SmallChange="1" Value="250" ValueChanged="Slider_ValueChanged"/>
+        <Button Content="Start" HorizontalAlignment="Left" Margin="705,489,0,0" VerticalAlignment="Top" Width="75" Click="Start" FontFamily="Consolas" FontWeight="Bold" Background="#FF373737" Foreground="White" BorderBrush="#FF1D1D1D" Height="30"/>
+        <Slider HorizontalAlignment="Left" Margin="280,495,0,0" VerticalAlignment="Top" Width="420" Height="19" Maximum="499" SmallChange="1" Value="250" ValueChanged="Slider_ValueChanged"/>
         <Label Content="Generation : 0" HorizontalAlignment="Left" Margin="290,0,0,0" VerticalAlignment="Top" Height="26" Width="140" Foreground="White" FontWeight="Bold" Initialized="GenerationLabel_Initialized" FontFamily="Consolas"/>
         <Label Content="Place Count : 0" HorizontalAlignment="Left" Margin="435,0,0,0" VerticalAlignment="Top" FontWeight="Bold" Foreground="White" Width="170" Initialized="PlaceCountLabel_Initialized" FontFamily="Consolas" Height="26"/>
-        <Grid HorizontalAlignment="Left" Height="465" Margin="280,31,0,0" VerticalAlignment="Top" Width="500" Initialized="GenerationInfoGrid_Initialized" Background="#FF1F1F1F"/>
+        <Grid HorizontalAlignment="Left" Height="453" Margin="280,31,0,0" VerticalAlignment="Top" Width="520" Initialized="GenerationInfoGrid_Initialized" Background="#FF1F1F1F"/>
     </Grid>
 </Window>
