@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TetrisGame;
 
 namespace TetrisGA {
+    [Serializable]
     public class TetrisAIManager {
         private Random random;
         public Random Random {

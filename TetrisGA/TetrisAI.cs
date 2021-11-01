@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TetrisGame;
 
 namespace TetrisGA {
+    [Serializable]
     public class TetrisAI : ICloneable {
 
         private Tetris tetris;

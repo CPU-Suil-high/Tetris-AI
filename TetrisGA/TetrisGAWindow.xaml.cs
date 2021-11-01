@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,7 +23,7 @@ namespace TetrisGA {
     /// <summary>
     /// MainWindow.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class TetrisGAWindow : Window {
 
         private Image[] tetrisImages;
         public Image[] TetrisImages {
@@ -49,6 +52,26 @@ namespace TetrisGA {
             }
             set {
                 nextInterval = value;
+            }
+        }
+
+        private Slider slider;
+        public Slider Slider {
+            get {
+                return slider;
+            }
+            set {
+                slider = value;
+            }
+        }
+
+        private Button startAndPauseButton;
+        public Button StartAndPauseButton {
+            get {
+                return startAndPauseButton;
+            }
+            set {
+                startAndPauseButton = value;
             }
         }
 
@@ -123,7 +146,7 @@ namespace TetrisGA {
             }
         }
 
-        public MainWindow() {
+        public TetrisGAWindow() {
             Image[] tetrisImages = new Image[25];
 
             for (int i = 0; i < 25; i++) {
@@ -148,7 +171,6 @@ namespace TetrisGA {
 
             TAManager.NextGeneration();
             PlaceCount = 0;
-            GenerationLabel.Content = $"Generation : {TAManager.Generation}";
 
             UpdateGenerationInfo();
         }
@@ -157,7 +179,7 @@ namespace TetrisGA {
             if (PlaceTimer.Interval != NextInterval) {
                 PlaceTimer.Interval = NextInterval;
             }
-            if (TAManager.CheckAllIsGameOver() || ++PlaceCount > 500) {
+            if (TAManager.CheckAllIsGameOver() || ++PlaceCount > 1000) {
                 NextGeneration();
                 return;
             }
@@ -167,6 +189,8 @@ namespace TetrisGA {
         }
 
         private void UpdateGenerationInfo() {
+            GenerationLabel.Content = $"Generation : {TAManager.Generation}";
+
             if (PreviousBestGene == null) {
                 PreviousBestGeneLabel.Content = "[Previous Best Gene] : ()";
             } else {
@@ -175,7 +199,7 @@ namespace TetrisGA {
                 for (int i = 0; i < 9; i++) {
                     args[i] = (object)PreviousBestGene[i];
                 }
-                PreviousBestGeneLabel.Content = string.Format("[Previous Best Gene] : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4})", args);
+                PreviousBestGeneLabel.Content = string.Format("[Previous Best Gene] : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4} )", args);
             }
 
             for (int i = 0; i < 25; i++) {
@@ -186,7 +210,7 @@ namespace TetrisGA {
                 for (int j = 0; j < 9; j++) {
                     args[j] = (object)gene[j];
                 }
-                GeneLabels[i].Content = $"[{i,2}]" + string.Format(" : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4})", args);
+                GeneLabels[i].Content = $"[{i,2}]" + string.Format(" : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4} )", args);
             }
         }
 
@@ -254,6 +278,56 @@ namespace TetrisGA {
             }
         }
 
+        private void SaveGeneration() {
+            Pause();
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "TetrisGeneration File (*.bin)|*.bin";
+            string path = "";
+
+            if (saveFileDialog.ShowDialog() == true) {
+                path = saveFileDialog.FileName;
+
+                SaveData saveData = new SaveData(this);
+
+                Stream ws = new FileStream(path, FileMode.Create);
+                BinaryFormatter serializer = new BinaryFormatter();
+
+                serializer.Serialize(ws, saveData);
+
+                ws.Close();
+            }
+        }
+
+        private void LoadGeneration() {
+            Pause();
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "TetrisGeneration File (*.bin)|*.bin";
+            string path = "";
+
+            if (openFileDialog.ShowDialog() == true) {
+                path = openFileDialog.FileName;
+
+                Stream rs = new FileStream(path, FileMode.Open);
+                BinaryFormatter deserializer = new BinaryFormatter();
+
+                SaveData saveData = (SaveData)deserializer.Deserialize(rs);
+
+                rs.Close();
+
+                NextInterval = saveData.nextInterval;
+                TAManager = saveData.tetrisAIManager;
+                PlaceCount = saveData.placeCount;
+                PreviousBestGene = saveData.previousBestGene;
+
+                Slider.Value = 500 - NextInterval.Milliseconds;
+
+                UpdateGenerationInfo();
+                UpdateTetrisImages();
+            }
+        }
+
         private void Canvas_Initialized(object sender, EventArgs e) {
             Canvas canvas = (Canvas)sender;
            
@@ -272,26 +346,32 @@ namespace TetrisGA {
             UpdateTetrisImages();
         }
 
-        private void Start(object sender, RoutedEventArgs e) {
-            Button button = (Button)sender;
+        private void Slider_Initialized(object sender, EventArgs e) {
+            Slider = (Slider)sender;
+        }
 
-            button.Content = "Pause";
-
-            button.Click -= Start;
-            button.Click += Pause;
+        private void Start() {
+            StartAndPauseButton.Content = "Pause";
 
             PlaceTimer.Start();
         }
 
-        private void Pause(object sender, RoutedEventArgs e) {
-            Button button = (Button)sender;
-
-            button.Content = "Start";
-
-            button.Click += Start;
-            button.Click -= Pause;
+        private void Pause() {
+            StartAndPauseButton.Content = "Start";
 
             PlaceTimer.Stop();
+        }
+
+        private void Button_Initialized(object sender, EventArgs e) {
+            StartAndPauseButton = (Button)sender;
+        }
+
+        private void StartAndPauseButton_Click(object sender, RoutedEventArgs e) {
+            if (PlaceTimer.IsEnabled) {
+                Pause();
+            } else {
+                Start();
+            }
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
@@ -332,6 +412,14 @@ namespace TetrisGA {
             }
 
             UpdateGenerationInfo();
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) {
+            SaveGeneration();
+        }
+
+        private void LoadButton_Click(object sender, RoutedEventArgs e) {
+            LoadGeneration();
         }
     }
 }

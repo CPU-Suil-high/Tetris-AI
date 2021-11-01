@@ -17,6 +17,7 @@ namespace TetrisGame
         S,
         Z
     }
+    [Serializable]
     public class Tetris : ICloneable
     {
 

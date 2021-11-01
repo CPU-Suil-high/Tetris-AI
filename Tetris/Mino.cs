@@ -28,6 +28,7 @@ namespace TetrisGame {
         {new Point(-1, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0), new Point(0, 0) }
         };
     }
+    [Serializable]
     public class Mino : ICloneable {
         private MinoType[,] blocks;
         public MinoType[,] Blocks {
@@ -129,7 +130,7 @@ namespace TetrisGame {
             return mino;
         }
     }
-
+    [Serializable]
     public class MinoI : Mino {
         public MinoI() : base() {
             Blocks = new MinoType[5, 5] {
@@ -143,7 +144,7 @@ namespace TetrisGame {
             Offset = OffsetDatas.OffsetI;
         }
     }
-
+    [Serializable]
     public class MinoJ : Mino {
         public MinoJ() : base() {
             Blocks = new MinoType[3, 3] {
@@ -155,7 +156,7 @@ namespace TetrisGame {
             Offset = OffsetDatas.OffsetJLSTZ;
         }
     }
-
+    [Serializable]
     public class MinoL : Mino {
         public MinoL() : base() {
             Blocks = new MinoType[3, 3] {
@@ -167,7 +168,7 @@ namespace TetrisGame {
             Offset = OffsetDatas.OffsetJLSTZ;
         }
     }
-
+    [Serializable]
     public class MinoO : Mino {
         public MinoO() : base() {
             Blocks = new MinoType[3, 3] {
@@ -179,7 +180,7 @@ namespace TetrisGame {
             Offset = OffsetDatas.OffsetO;
         }
     }
-
+    [Serializable]
     public class MinoS : Mino {
         public MinoS() : base() {
             Blocks = new MinoType[3, 3] {
@@ -191,7 +192,7 @@ namespace TetrisGame {
             Offset = OffsetDatas.OffsetJLSTZ;
         }
     }
-
+    [Serializable]
     public class MinoT : Mino {
         public MinoT() : base() {
             Blocks = new MinoType[3, 3] {
@@ -203,7 +204,7 @@ namespace TetrisGame {
             Offset = OffsetDatas.OffsetJLSTZ;
         }
     }
-
+    [Serializable]
     public class MinoZ : Mino {
         public MinoZ() : base() {
             Blocks = new MinoType[3, 3] {
