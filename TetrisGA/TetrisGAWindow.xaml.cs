@@ -192,14 +192,14 @@ namespace TetrisGA {
             GenerationLabel.Content = $"Generation : {TAManager.Generation}";
 
             if (PreviousBestGene == null) {
-                PreviousBestGeneLabel.Content = "[Previous Best Gene] : ()";
+                PreviousBestGeneLabel.Content = "[PrevBestGene] : ()";
             } else {
                 object[] args = new object[9];
 
                 for (int i = 0; i < 9; i++) {
                     args[i] = (object)PreviousBestGene[i];
                 }
-                PreviousBestGeneLabel.Content = string.Format("[Previous Best Gene] : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4} )", args);
+                PreviousBestGeneLabel.Content = string.Format("[PrevBestGene] : ({0, 5},{1, 5},{2, 5},{3, 5},{4, 5},{5, 5},{6, 5},{7, 5},{8, 5})", args);
             }
 
             for (int i = 0; i < 25; i++) {
@@ -210,7 +210,7 @@ namespace TetrisGA {
                 for (int j = 0; j < 9; j++) {
                     args[j] = (object)gene[j];
                 }
-                GeneLabels[i].Content = $"[{i,2}]" + string.Format(" : ({0, 4},{1, 4},{2, 4},{3, 4},{4, 4},{5, 4},{6, 4},{7, 4},{8, 4} )", args);
+                GeneLabels[i].Content = $"[{i,2}]" + string.Format(" : ({0, 5},{1, 5},{2, 5},{3, 5},{4, 5},{5, 5},{6, 5},{7, 5},{8, 5})", args);
             }
         }
 

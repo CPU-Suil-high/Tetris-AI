@@ -8,6 +8,9 @@ using TetrisGame;
 namespace TetrisGA {
     [Serializable]
     public class TetrisAIManager {
+        public static readonly int MaxWeight = 1000;
+        public static readonly int MinWeight = -1000;
+
         private Random random;
         public Random Random {
             get {
@@ -109,7 +112,7 @@ namespace TetrisGA {
             int[] gene = new int[9];
 
             for (int i = 0; i < 9; i++) {
-                gene[i] = Random.Next(-100, 101);
+                gene[i] = Random.Next(MinWeight, MaxWeight+1);
             }
 
             return gene;
@@ -184,16 +187,16 @@ namespace TetrisGA {
                     int num = Random.Next(0, 100);
 
                     if (num < 1) {
-                        genes[i][j] = Random.Next(-100, 101);
+                        genes[i][j] = Random.Next(MinWeight, MaxWeight+1);
                     } else if (num < 6) {
-                        genes[i][j]++;
-                        if (genes[i][j] > 100) {
-                            genes[i][j]--;
+                        genes[i][j] += Random.Next(1, 6);
+                        if (genes[i][j] > MaxWeight) {
+                            genes[i][j] = MaxWeight;
                         }
                     } else if (num < 11) {
-                        genes[i][j]--;
-                        if (genes[i][j] < -100) {
-                            genes[i][j]++;
+                        genes[i][j] -= Random.Next(1, 6);
+                        if (genes[i][j] < MinWeight) {
+                            genes[i][j] = MinWeight;
                         }
                     }
                 }
@@ -203,6 +206,8 @@ namespace TetrisGA {
         }
 
         public void NextGeneration() {
+            Random = new Random();
+
             Generation++;
             Seed = Random.Next(0, int.MaxValue);
 

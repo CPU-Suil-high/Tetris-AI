@@ -43,24 +43,30 @@ namespace TetrisGA {
         }
 
         private Tetris GetMaxWeightTetris() {
-            Tetris maxTetris = GetMaxWeightTetrisFromRotation(0);
+            Tetris maxTetris = GetMaxWeightTetrisFromRotationAndHold(0, false);
             int maxWeight = GetWeight(maxTetris);
 
-            for (int i = 1; i < 4; i++) {
-                Tetris temp = GetMaxWeightTetrisFromRotation(i);
-                int weight = GetWeight(temp);
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 4; j++) {
+                    Tetris temp = GetMaxWeightTetrisFromRotationAndHold(j, i == 0 ? false : true);
+                    int weight = GetWeight(temp);
 
-                if (weight > maxWeight) {
-                    maxWeight = weight;
-                    maxTetris = temp;
+                    if (weight > maxWeight) {
+                        maxWeight = weight;
+                        maxTetris = temp;
+                    }
                 }
             }
 
             return maxTetris;
         }
 
-        private Tetris GetMaxWeightTetrisFromRotation(int rotation) {
+        private Tetris GetMaxWeightTetrisFromRotationAndHold(int rotation, bool hold) {
             Tetris tetris = (Tetris)Tetris.Clone();
+
+            if (hold) {
+                tetris.Hold();
+            }
 
             for (int i = 0; i < rotation; i++) {
                 tetris.RotateClockwise();

@@ -20,7 +20,6 @@ namespace TetrisGame
     [Serializable]
     public class Tetris : ICloneable
     {
-
         private int seed;
         public int Seed {
             get {
@@ -64,6 +63,16 @@ namespace TetrisGame
 
             set {
                 curMino = value;
+            }
+        }
+
+        private MinoType holdMinoType;
+        public MinoType HoldMinoType {
+            get {
+                return holdMinoType;
+            }
+            set {
+                holdMinoType = value;
             }
         }
 
@@ -163,14 +172,8 @@ namespace TetrisGame
             return minoType;
         }
 
-        Mino GetNextMino() {
-            MinoType minoType = NextMinos[0];
-            
-            NextMinos.RemoveAt(0);
-            NextMinos.Add(GetRandomMinoType());
-
+        Mino GetMino(MinoType minoType) {
             Mino mino;
-
             switch (minoType) {
                 case MinoType.I:
                     mino = new MinoI();
@@ -202,6 +205,18 @@ namespace TetrisGame
             } else {
                 mino.Position = new Point(3, -3);
             }
+
+            return mino;
+        }
+
+        Mino GetNextMino() {
+            CurMinoType = NextMinos[0];
+            
+            NextMinos.RemoveAt(0);
+            NextMinos.Add(GetRandomMinoType());
+
+            Mino mino = GetMino(CurMinoType);
+
             return mino;
         }
 
@@ -397,7 +412,14 @@ namespace TetrisGame
         }
 
         public void Hold() {
+            if (HoldMinoType == MinoType.None) {
+                HoldMinoType = CurMinoType;
+                CurMino = GetNextMino();
+            } else {
+                (HoldMinoType, CurMinoType) = (CurMinoType, HoldMinoType);
 
+                CurMino = GetMino(CurMinoType);
+            }
         }
         
         public bool CheckHavingCeiling(int x, int y) {
