@@ -220,11 +220,15 @@ namespace TetrisGA {
 
                 DrawingGroup dg = new DrawingGroup();
 
+                // 배경
                 RectangleGeometry background = new RectangleGeometry(new Rect(0, 0, 50, 100));
                 GeometryDrawing backgroundDrawing = new GeometryDrawing();
                 backgroundDrawing.Geometry = background;
                 backgroundDrawing.Brush = Brushes.Black;
 
+                dg.Children.Add(backgroundDrawing);
+
+                // 번호
                 FormattedText num = new FormattedText($"{i}", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Consolas"), 10, Brushes.Gray, 120);
 
                 Geometry numGeomtry = num.BuildGeometry(new Point(0, 0));
@@ -232,9 +236,19 @@ namespace TetrisGA {
                 numDrawing.Geometry = numGeomtry;
                 numDrawing.Brush = Brushes.Gray;
 
-                dg.Children.Add(backgroundDrawing);
                 dg.Children.Add(numDrawing);
 
+                // 점수
+                FormattedText score = new FormattedText($"{TAManager.Tetrises[i].Score}", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Consolas"), 10, Brushes.Gray, 120);
+
+                Geometry scoreGeomtry = score.BuildGeometry(new Point(0, 10));
+                GeometryDrawing scoreDrawing = new GeometryDrawing();
+                scoreDrawing.Geometry = scoreGeomtry;
+                scoreDrawing.Brush = Brushes.ForestGreen;
+
+                dg.Children.Add(scoreDrawing);
+
+                // 블럭
                 for (int y = 0; y < 20; y++) {
                     for (int x = 0; x < 10; x++) {
                         if (tetris.PlayField[y, x] != MinoType.None) {

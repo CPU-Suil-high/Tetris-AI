@@ -335,7 +335,7 @@ namespace TetrisGame
             if (CheckMinoCollision()) {
                 return;
             }
-
+            Score++;
             for (int i = 0; i < CurMino.Size; i++) {
                 int y = CurMino.Position.Y + i;
 

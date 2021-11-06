@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         
         
-        Title="MainWindow" Height="577" Width="814" Margin="0" Background="#FF262626">
+        Title="TetrisGA" Height="577" Width="814" Margin="0" Background="#FF262626" ResizeMode="NoResize">
     <!-- 실제 길이 보다 height 37 크게 width는 14크게 써야한다 이유는 나도 모름 -->
     <Grid HorizontalAlignment="Left" Height="520" VerticalAlignment="Top" Width="780" Margin="10,10,0,0">
         <Canvas HorizontalAlignment="Left" Height="520" VerticalAlignment="Top" Width="270" Initialized="Canvas_Initialized"/>

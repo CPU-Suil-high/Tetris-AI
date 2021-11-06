@@ -128,8 +128,8 @@ namespace TetrisGA {
             }
 
             Array.Sort(tetrisAIs, (a, b) => {
-                int aScore = a.Tetris.Score * 2 + a.Tetris.PlaceCount;
-                int bScore = b.Tetris.Score * 2 + b.Tetris.PlaceCount;
+                int aScore = a.Tetris.Score;
+                int bScore = b.Tetris.Score;
 
                 if (aScore == bScore) {
                     return 0;
